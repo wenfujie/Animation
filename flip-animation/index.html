@@ -1,0 +1,103 @@
+<!--
+ * @Date: 2021-09-05 17:12:42
+ * @LastEditors: wenfujie
+ * @LastEditTime: 2021-09-05 17:59:16
+ * @FilePath: /github-repo-for-me/Animation/flip-animation/index.html
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app" v-cloak>
+      <!-- <div class="action">
+        <button @click="add">
+          <span v-show="adding">下载中……</span>
+          <span v-show="!adding">追加图片</span>
+        </button> -->
+      <button @click="shuffle">乱序图片</button>
+      <!-- <button @click="reset">重置</button>
+      </div>   -->
+      <div v-if="loading" class="loading">正在加载图片……</div>
+      <div v-else class="wrap">
+        <div class="img-wrap" v-for="src in imgs" :key="src">
+          <img ref="imgs" class="img" :src="src" />
+        </div>
+      </div>
+    </div>
+
+    <script src="./web-animation-polyfill.js"></script>
+    <script src="./vue.js"></script>
+    <script src="./util.js"></script>
+    <script src="./mock.js"></script>
+
+    <script>
+      let initialGetSister = getSisterGenerator();
+      new Vue({
+        el: "#app",
+        data() {
+          return {
+            loading: false,
+            imgs: [],
+          };
+        },
+        methods: {
+          shuffle() {
+            this.scheduleAnimation(() => {
+              this.imgs = shuffle(this.imgs);
+            });
+          },
+          scheduleAnimation(update) {
+            // 获取旧图片的位置
+            const prevImgs = this.$refs.imgs.slice();
+            const prevSrcRectMap = createSrcRectMap(prevImgs);
+            // 更新数据
+            update();
+            // DOM更新后
+            this.$nextTick(() => {
+              const currentSrcRectMap = createSrcRectMap(prevImgs);
+              Object.keys(prevSrcRectMap).forEach((src) => {
+                const currentRect = currentSrcRectMap[src];
+                const prevRect = prevSrcRectMap[src];
+
+                const invert = {
+                  left: prevRect.left - currentRect.left,
+                  top: prevRect.top - currentRect.top,
+                };
+
+                const keyframes = [
+                  {
+                    transform: `translate(${invert.left}px, ${invert.top}px)`,
+                  },
+                  { transform: "translate(0, 0)" },
+                ];
+                const options = {
+                  duration: 300,
+                  easing: "cubic-bezier(0,0,0.32,1)",
+                };
+
+                const animation = currentRect.img.animate(keyframes, options);
+              });
+            });
+          },
+        },
+        created() {
+          this.imgs = initialGetSister();
+        },
+      });
+      function createSrcRectMap(imgs) {
+        return imgs.reduce((prev, img) => {
+          const rect = img.getBoundingClientRect();
+          const { left, top } = rect;
+          prev[img.src] = { left, top, img };
+          return prev;
+        }, {});
+      }
+    </script>
+  </body>
+</html>
