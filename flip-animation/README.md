@@ -1,12 +1,14 @@
 <!--
  * @Date: 2021-09-05 18:11:52
  * @LastEditors: wenfujie
- * @LastEditTime: 2021-09-05 18:19:18
- * @FilePath: /github-repo-for-me/Animation/flip-animation/README.md
+ * @LastEditTime: 2021-09-05 18:37:14
+ * @FilePath: /Animation/flip-animation/README.md
 -->
 
 ## 前言
 该 Demo 是从 [sl1673495/flip-animation](https://github.com/sl1673495/flip-animation) 搬运过来的。
+
+[运行效果](https://wenfujie.github.io/Animation/flip-animation/)
 
 ## 主要使用 Web Animation API 实现
 
